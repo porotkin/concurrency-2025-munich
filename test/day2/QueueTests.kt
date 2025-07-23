@@ -20,7 +20,8 @@ abstract class AbstractQueueWithRemoveTest(
     queue = queue,
     checkObstructionFreedom = checkObstructionFreedom,
     threads = 3,
-    actorsBefore = 4
+    actorsBefore = 4,
+    scenarios = 500
 ) {
     @Operation
     fun remove(@Param(name = "element") element: Int) = queue.remove(element)

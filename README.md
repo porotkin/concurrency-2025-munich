@@ -206,3 +206,85 @@ in linear time, but remove this node in _constant_ time.
 
 * `./gradlew test --tests MSQueueWithConstantTimeRemoveTest` on Linux or MacOS
 * `gradlew test --tests MSQueueWithConstantTimeRemoveTest` on Windows
+
+
+## Day 3
+
+### CAS2: Reentrant Lock
+
+In [`src/day3/AtomicArrayWithCas2OnReentrantLock.kt`](src/day3/AtomicArrayWithCas2OnReentrantLock.kt),
+implement the `cas2(..)` and `get(..)` operations 
+using the fine-grained locking technique to protect the array cells.
+
+To test your solution, please run:
+
+* `./gradlew test --tests AtomicArrayWithCAS2OnReentrantLockTest` on Linux or MacOS
+* `gradlew test --tests AtomicArrayWithCAS2OnReentrantLockTest` on Windows
+
+
+### CAS2: "Locked" State
+
+In [`src/day3/AtomicArrayWithCAS2OnLockedState.kt`](src/day3/AtomicArrayWithCAS2OnLockedState.kt),
+implement the `cas2(..)` and `get(..)` operations.
+Use a special "Locked" value to mark cell as locked,
+actively waiting for the cell state change in other operations.
+
+To test your solution, please run:
+
+* `./gradlew test --tests AtomicArrayWithCAS2OnLockedStateTest` on Linux or MacOS
+* `gradlew test --tests AtomicArrayWithCAS2OnLockedStateTest` on Windows
+
+
+### CAS2: Single-Writer
+
+In [`src/day3/AtomicArrayWithCAS2SingleWriter.kt`](src/day3/AtomicArrayWithCAS2SingleWriter.kt),
+implement the `cas2(..)` and `get(..)` operations using descriptors.
+In this task, `cas2(..)` can be called only in one thread,
+so concurrent `cas2(..)` invocations are forbidden.
+
+To test your solution, please run:
+
+* `./gradlew test --tests AtomicArrayWithCAS2SingleWriterTest` on Linux or MacOS
+* `gradlew test --tests AtomicArrayWithCAS2SingleWriterTest` on Windows
+
+
+### CAS2: With Implemented DCSS
+
+In [`src/day3/AtomicArrayWithCAS2.kt`](src/day3/AtomicArrayWithCAS2.kt),
+implement the `cas2(..)` operation.
+Unlike in the "CAS2: Simplified" task, updates are no longer unique.
+This can lead to the ABA problem. To solve it, please use
+the already implemented Double-Compare-Single-Set operation when installing CAS2 descriptors.
+
+To test your solution, please run:
+
+* `./gradlew test --tests AtomicArrayWithCAS2AndImplementedDCSSTest` on Linux or MacOS
+* `gradlew test --tests AtomicArrayWithCAS2AndImplementedDCSSTest` on Windows
+
+
+### Double-Compare-Single-Set
+
+In [`src/day3/DoubleCompareSingleSet.kt`](src/day3/DoubleCompareSingleSet.kt),
+implement the `getCell()` and `dcss(..)` operations.
+Use a `DcssDescriptor` to apply the `dcss(..)` operation.
+Other threads should help this descriptor to finish if they observe it in `cell`.
+
+To test your solution, please run:
+
+* `./gradlew test --tests DoubleCompareSingleSetTest` on Linux or MacOS
+* `gradlew test --tests DoubleCompareSingleSetTest` on Windows
+
+
+### CAS2
+
+In [`src/day3/AtomicArrayWithCAS2.kt`](src/day3/AtomicArrayWithCAS2.kt),
+implement the `cas2(..)` operation.
+Unlike in the "CAS2: Simplified" task, updates are no longer unique.
+This can lead to the ABA problem. To solve it, please use
+the Double-Compare-Single-Set operation when installing CAS2 descriptors.
+Use your DCSS implementation from the previous assignment.
+
+To test your solution, please run:
+
+* `./gradlew test --tests AtomicArrayWithCAS2Test` on Linux or MacOS
+* `gradlew test --tests AtomicArrayWithCAS2Test` on Windows

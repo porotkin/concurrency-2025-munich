@@ -42,7 +42,6 @@ class FAABasedQueueSimplified<E> : Queue<E> {
             val enqIdx = enqIdx.get()
 
             if (enqIdx != this.enqIdx.get()) continue
-            if (deqIdx != this.deqIdx.get()) continue
 
             return deqIdx < enqIdx
         }

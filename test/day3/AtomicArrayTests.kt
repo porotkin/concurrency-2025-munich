@@ -29,7 +29,8 @@ class AtomicArrayWithCAS2OnReentrantLockTest : TestBase(
 @Param(name = "value", gen = IntGen::class, conf = "0:2")
 class AtomicArrayWithCAS2OnLockedStateTest : TestBase(
     sequentialSpecification = IntAtomicArraySequential::class,
-    checkObstructionFreedom = false
+    checkObstructionFreedom = false,
+    scenarios = 500
 ) {
     private val array = AtomicArrayWithCAS2OnLockedState(ARRAY_SIZE, 0)
 

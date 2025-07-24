@@ -7,9 +7,6 @@ import java.util.concurrent.locks.*
 class AtomicArrayWithCAS2OnLockedState<E : Any>(size: Int, initialValue: E) {
     private val array = AtomicReferenceArray<Any?>(size)
 
-    // TODO: Use these locks to protect the array cells.
-    private val locks = Array(size) { ReentrantLock() }
-
     init {
         // Fill array with the initial value.
         for (i in 0 until size) {

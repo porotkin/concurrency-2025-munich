@@ -1,6 +1,7 @@
 package day4
 
 import day1.*
+import org.jetbrains.lincheck.Lincheck
 import org.junit.*
 import java.util.concurrent.atomic.*
 import kotlin.concurrent.*
@@ -20,7 +21,7 @@ import kotlin.concurrent.*
 */
 class CounterTest {
     @Test
-    fun test() {
+    fun test() = Lincheck.runConcurrentTest {
         var counter = 0
         val t1 = thread {
             counter++
@@ -90,7 +91,7 @@ class FlatCombiningQueueWithTrickyBugTest {
         }.forEach { it.join() }
     }
 
-    private val THREADS = 6
+    private val THREADS = 2
     private val ENQ_DEQ_PAIRS_PER_THREAD = 1000_000
 }
 

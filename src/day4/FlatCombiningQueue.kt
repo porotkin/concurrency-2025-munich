@@ -17,7 +17,7 @@ open class FlatCombiningQueue<E : Any> : Queue<E> {
         queue.removeFirstOrNull()
     }
 
-    private inline fun <R> enqueueOrDequeue(task: Any, operation: () -> R): R {
+    private fun <R> enqueueOrDequeue(task: Any, operation: () -> R): R {
         // TODO: Make this code thread-safe using the flat-combining technique.
         // TODO: 1.  Try to become a combiner by
         // TODO:     changing `combinerLock` from `false` (unlocked) to `true` (locked).

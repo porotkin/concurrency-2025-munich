@@ -3,7 +3,8 @@
 package day3
 
 import day3.AtomicArrayWithCAS2SingleWriter.Status.*
-import java.util.concurrent.atomic.*
+import java.util.concurrent.atomic.AtomicReference
+import java.util.concurrent.atomic.AtomicReferenceArray
 
 // This implementation never stores `null` values.
 class AtomicArrayWithCAS2SingleWriter<E : Any>(size: Int, initialValue: E) {
@@ -17,13 +18,21 @@ class AtomicArrayWithCAS2SingleWriter<E : Any>(size: Int, initialValue: E) {
     }
 
     fun get(index: Int): E {
-        // TODO: the cell can store CAS2Descriptor
-        return array[index] as E
+        val cell = array[index]
+
+        if (cell is AtomicArrayWithCAS2SingleWriter<*>.CAS2Descriptor) {
+            return when (cell.status.get()) {
+                UNDECIDED, FAILED -> if (index == cell.index1) cell.expected1 else cell.expected2
+                SUCCESS -> if (index == cell.index1) cell.update1 else cell.update2
+            } as E
+        }
+
+        return cell as E
     }
 
     fun cas2(
         index1: Int, expected1: E, update1: E,
-        index2: Int, expected2: E, update2: E
+        index2: Int, expected2: E, update2: E,
     ): Boolean {
         require(index1 != index2) { "The indices should be different" }
         val descriptor = CAS2Descriptor(
@@ -36,15 +45,50 @@ class AtomicArrayWithCAS2SingleWriter<E : Any>(size: Int, initialValue: E) {
 
     inner class CAS2Descriptor(
         val index1: Int, val expected1: E, val update1: E,
-        val index2: Int, val expected2: E, val update2: E
+        val index2: Int, val expected2: E, val update2: E,
     ) {
         val status = AtomicReference(UNDECIDED)
 
         fun apply() {
-            // TODO: Install the descriptor, update the status, and update the cells;
-            // TODO: create functions for each of these three phases.
-            // TODO: In this task, only one thread can call cas2(..),
-            // TODO: so cas2(..) calls cannot be executed concurrently.
+            val installed = installDescriptor()
+            updateStatus(installed)
+            updateCells()
+        }
+
+        private fun installDescriptor(): Boolean {
+            if (!array.compareAndSet(index1, expected1, this)) {
+                return false
+            }
+
+            if (!array.compareAndSet(index2, expected2, this)) {
+                return false
+            }
+
+            return true
+        }
+
+        private fun updateStatus(isInstalled: Boolean) {
+            if (!isInstalled) {
+                status.compareAndSet(UNDECIDED, FAILED)
+                return
+            }
+
+            status.compareAndSet(UNDECIDED, SUCCESS)
+        }
+
+        private fun updateCells() {
+            val status = status.get()
+
+            // rollback on failure
+            if (status === FAILED) {
+                array.compareAndSet(index1, this, expected1)
+                return
+            }
+
+            if (status === SUCCESS) {
+                array[index1] = update1
+                array[index2] = update2
+            }
         }
     }
 
